@@ -1,3 +1,4 @@
+from Util.WindowMgr import WindowMgr
 
 def rectToString(rect):
     strings = [str(x) for x in rect]
@@ -9,8 +10,10 @@ def rectFromString(string):
     
 class WindowSettings(object):
     def __init__(self,loadSettings = False):
+        self.winmgr = WindowMgr()
         self.windowNameTarget = None
-        self.rect = None
+        self.rect = [0,0,0,0]
+        print(self.rect)
         self.gridSize = 0
         if loadSettings:
             self.loadSettings()
@@ -32,7 +35,11 @@ class WindowSettings(object):
         lines.append(str(self.gridSize) + '\n')
         with open("windowSettings.cfg", "w") as f:
             f.writelines(lines)
-            
+    
+    def getWindowNames(self):
+        result = self.winmgr.getWindows()
+        return result
+    
     def __str__(self):
         return (str(self.windowNameTarget) + ":" +
                 str(self.rect) + " @ " +

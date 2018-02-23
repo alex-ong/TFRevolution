@@ -1,43 +1,32 @@
 from Model.Model import Model
-from Controller.Controller import Controller
 from View.View import View
+from Controller.Controller import Controller
+from tkinter import *
+import sys
 import asyncio
-import tkinter
-import time
 
-GUI_REFRESH = 0.001 #a thousand fps.
-async def run_tk(view, controller, interval=GUI_REFRESH):
+
+async def run_tk(view, controller, interval=0.001):
     '''
-    Runs the tkinter loop through the asyncio event loop.
-    This allows us to use asyncio coroutines, which are good for e.g loading image thumbnails from URL 
-    From: https://www.reddit.com/r/Python/comments/33ecpl/neat_discovery_how_to_combine_asyncio_and_tkinter/
-    '''    
+    Run a tkinter app in an asyncio event loop.
+    '''
     try:
-        timer = time.perf_counter()
-        while True:
-            # update gui
-            newTime = time.perf_counter()
-            delta = newTime - timer            
-            
-            view.update()      
-             
-            # update logic if required.
-            controller.update(delta)
-            
+        while True:            
+            view.update() #update gui
+            controller.update() #update controller
             await asyncio.sleep(interval)
-            
-            # keep track of deltaTimes for performance debugging
-            # print(delta)
-            timer = newTime
-            
-    except tkinter.TclError as e:        
+    except TclError as e:
         if "application has been destroyed" not in e.args[0]:
-            raise 
-        
-if __name__ == '__main__':    
+            raise
+
+
+async def main():
     m = Model()
     v = View()
-    c = Controller(m,v)
-    # run the program!
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_tk(v, c))
+    c = Controller(m, v)
+            
+    await run_tk(v, c)
+
+
+if __name__ == "__main__":    
+    asyncio.get_event_loop().run_until_complete(main())

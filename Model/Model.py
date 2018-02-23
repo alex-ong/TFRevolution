@@ -1,6 +1,6 @@
 from .WindowSettings import WindowSettings
 class Model(object):
-    def __init__(self):
+    def __init__(self):    
         self.WindowSettings = WindowSettings(True)
     
     def update(self):

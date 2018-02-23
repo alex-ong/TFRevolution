@@ -56,7 +56,7 @@ class WindowMgr:
             if not self.isRealWindow(hWnd):
                 return
             text = win32gui.GetWindowText(hWnd)
-            windows.append((hWnd, text))
+            windows.append(text)
         windows = []
         win32gui.EnumWindows(callback, windows)
         return windows

@@ -1,9 +1,9 @@
 try:
     import win32ui
-except:
-    print ("please run command: pip install pypiwin32")
+except ImportError:
+    print('Please run "pip install pypiwin32"')    
 import time
-from Util.WindowMgr import WindowMgr
+# from Util.WindowMgr import WindowMgr
 import sys
     
 '''
@@ -23,10 +23,31 @@ it_per_sec = int(count/tf)
 print (str(it_per_sec) + " iterations per second")
 '''
 
+
 class Controller(object):
+
     def __init__(self, model, view):
         self.model = model
         self.view = view
-    
-    def update(self, timeDelta):
+        
+        self.view.SetWindowChooserCallbacks(self._OnWindowNameChosen,
+                                            self._OnRectChange,
+                                            self._OnGridSizeChange)
+        print(self.model.WindowSettings.rect)
+        self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
+                                    self.model.WindowSettings.rect,
+                                    self.model.WindowSettings.gridSize)
+
+    # model.WindowSettings
+    def _OnWindowNameChosen(self, value):
+        print('controller got windowName change')
+        self.model.WindowSettings.windowNameTarget = value
+
+    def _OnGridSizeChange(self, value):
+        self.model.WindowSettings.gridSize = value    
+
+    def _OnRectChange(self, value):
+        self.model.WindowSettings.rect = value
+            
+    def update(self):
         self.model.update()
