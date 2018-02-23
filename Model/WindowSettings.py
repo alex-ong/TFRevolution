@@ -11,13 +11,18 @@ def rectFromString(string):
 class WindowSettings(object):
     def __init__(self,loadSettings = False):
         self.winmgr = WindowMgr()
-        self.windowNameTarget = None
+        self.windowNameTarget = "None"
+        self.hwndTarget = 0
+        
         self.rect = [0,0,0,0]
-        print(self.rect)
         self.gridSize = 0
         if loadSettings:
             self.loadSettings()
     
+    def setTarget(self, hwnd, name):
+        self.hwndTarget = hwnd
+        self.windowNameTarget = name
+        
     def loadSettings(self):
         try:
             with open("windowSettings.cfg", "r") as f:
@@ -38,6 +43,15 @@ class WindowSettings(object):
     
     def getWindowNames(self):
         result = self.winmgr.getWindows()
+        foundIndex = -1
+        for i in range(len(result)):
+            if self.windowNameTarget == result[i][1]:
+                foundIndex = i
+                break
+        if foundIndex != -1:
+            foundItem = result[foundIndex]
+            result.remove(foundItem)
+            result = [foundItem] + result
         return result
     
     def __str__(self):
