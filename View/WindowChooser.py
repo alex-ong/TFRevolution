@@ -18,6 +18,8 @@ class WindowChooser(tk.Frame):
         tk.Button(self, text="Refresh window list", command=self._OnRefresh).grid(row=0, column=2)
         
         tk.Label(self, text="Capture rectangle").grid(row=1, column=0)
+        self.fpsLabel = tk.Label(self, text="FPS: ")
+        self.fpsLabel.grid(row=1, column=2)
         self.rect = RectChooser(self, self._OnRectChange)
         self.rect.grid(row=2, column=0, columnspan=3)
         
@@ -27,27 +29,42 @@ class WindowChooser(tk.Frame):
         self.playerSep = NumberChooser(self, 'playerX separation', self._OnPlayerXChange, 0.1)        
         self.playerSep.grid(row=3, column=2, columnspan=1)
         
-        tk.Button(self, text="Save", command=self._OnSave).grid(row=4)        
-        self.imageCanvas = ImageCanvas(self)
-        self.imageCanvas.grid(row=5, columnspan=4, sticky=tk.NSEW)
+        tk.Button(self, text="Save", command=self._OnSave).grid(row=4,column=0)
+        self.calibrationButton = tk.Button(self, text="Show/Hide Screenshot", 
+                                           command=self._OnShowCalibration)
+        self.calibrationButton.grid(row=4,column=1)
         
-        self.rawDataCanvas = RawDataCanvas(self)
-        self.rawDataCanvas.grid(row=6, columnspan=4, sticky=tk.NSEW)
+        self.processedButton = tk.Button(self, text="Show/Hide Processed", 
+                                           command=self._OnShowProcessed)
+        self.processedButton.grid(row=4,column=2)
         
-        self.fpsLabel = tk.Label(self, text="FPS: ")
-        self.fpsLabel.grid(row=7)
+        self.calibrationCanvas = ImageCanvas(self)
+        self.calibrationCanvas.grid(row=5, columnspan=4, sticky=tk.NSEW)
+        
+        self.processedCanvas = RawDataCanvas(self)
+        self.processedCanvas.grid(row=6, columnspan=4, sticky=tk.NSEW)
+        
+
+        
         
         self._GridSizeChangeCb = None
         self._RectChangeCb = None
         self._WindowNameChangeCb = None
         self._RefreshCb = None
         self._UpdatePlayerSeparation = None
-        self.timer = time.time()
+        self._OnShowProcessed = None
+        self._OnShowCalibration = None
         
+        self.showCalibration = True
+        self.showProcessed = True        
+        self.timer = time.time()
+
     def update(self):
         self.updateFPSLabel()
-        self.imageCanvas.update()
-        self.rawDataCanvas.update()
+        if self.showCalibration:
+            self.calibrationCanvas.update()            
+        if self.showProcessed:
+            self.processedCanvas.update()
         
     def updateFPSLabel(self):
         diff = time.time() - self.timer
@@ -81,7 +98,15 @@ class WindowChooser(tk.Frame):
         success, value = tryGetFloat(self.playerSep.value.get())        
         if success and self._UpdatePlayerSeparation is not None:
             self._UpdatePlayerSeparation(value)
-            
+    
+    def _OnShowProcessed(self):        
+        if self._OnToggleShowProcessed:
+            self._OnToggleShowProcessed()
+    
+    def _OnShowCalibration(self):
+        if self._OnToggleShowCalibration:
+            self._OnToggleShowCalibration()
+                    
     # Set callbacks
     def SetGridSizeChangeCallback(self, cb):
         self._GridSizeChangeCb = cb
@@ -99,14 +124,22 @@ class WindowChooser(tk.Frame):
         self._RefreshCb = cb
                         
     def SetGetImageSource(self, cb):
-        self.imageCanvas.SetImageSource(cb)
+        self.calibrationCanvas.SetImageSource(cb)
     
     def SetRawImageSource(self, cb):
-        self.rawDataCanvas.SetImageSource(cb)
+        self.processedCanvas.SetImageSource(cb)
     
     def SetPlayerXOffsetCallback(self, cb):
         self._UpdatePlayerSeparation = cb
         
+    def SetShowCalibrationCallback(self, cb):
+        self._OnToggleShowCalibration = cb
+        
+    def SetShowProcessedCallback(self, cb):
+        self._OnToggleShowProcessed = cb
+    
+    
+                         
     def show(self, names, rect, grid, playerX):
         self.windowNameTargetChooser['menu'].delete(0, 'end')         
         self.windowTarget.set(str(names[0][1]))
@@ -126,3 +159,19 @@ class WindowChooser(tk.Frame):
         self.playerSep.value.set(str(playerX))
         if (autoChooseWindow is not None):
             autoChooseWindow()
+
+    def SetCalibration(self, value):
+        if value:
+            self.calibrationCanvas.grid()
+        else:
+            self.calibrationCanvas.grid_forget()
+        self.showCalibration = value
+    
+    def SetProcessed(self, value):
+        if value:
+            self.processedCanvas.grid()
+        else:
+            self.processedCanvas.grid_forget()
+        self.showProcessed = value
+        
+        

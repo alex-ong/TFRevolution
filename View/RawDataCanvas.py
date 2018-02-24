@@ -5,7 +5,7 @@ from PIL import ImageTk
 class RawDataCanvas(tk.Canvas):
 
     def __init__(self, root):
-        super().__init__(root, width=500, height=400)        
+        super().__init__(root, width=500, height=200)        
         self._getImg = None
         self._img = None
         self._tmpImg = None

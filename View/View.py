@@ -15,8 +15,8 @@ class View(tk.Frame):
         self.winChooser.pack() 
   
     # called by Controller to set callbacks for when input changes
-    def SetWindowChooserCallbacks(self, name, rect, grid, save, refresh, 
-                                  playerX, image, rawImage):
+    def SetWindowChooserCallbacks(self, name, rect, grid, save, refresh,
+                                  playerX, image, rawImage, showCalib, showProcessed):
         self.winChooser.SetWindowNameChosenCallback(name)
         self.winChooser.SetRectChangeCallback(rect)
         self.winChooser.SetGridSizeChangeCallback(grid)
@@ -25,6 +25,8 @@ class View(tk.Frame):
         self.winChooser.SetPlayerXOffsetCallback(playerX)
         self.winChooser.SetGetImageSource(image)
         self.winChooser.SetRawImageSource(rawImage)
+        self.winChooser.SetShowCalibrationCallback(showCalib)
+        self.winChooser.SetShowProcessedCallback(showProcessed)
         
     def LoadWindowChooser(self, names, rect, grid, playerX):
         self.winChooser.show(names, rect, grid, playerX)

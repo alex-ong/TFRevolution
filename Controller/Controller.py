@@ -17,7 +17,10 @@ class Controller(object):
                                             self._OnRefresh,
                                             self._OnPlayerSepChange,
                                             self.model.GetImageArray,
-                                            self.model.GetProcessedArray)
+                                            self.model.GetProcessedArray,
+                                            self._OnShowCalibration,
+                                            self._OnShowProcessed,
+                                            )
         self.ShowWindowChooser()
         
 
@@ -40,7 +43,15 @@ class Controller(object):
         
     def _OnPlayerSepChange(self, value):     
         self.model.WindowSettings.playerDistance = value
+
+    def _OnShowProcessed(self):
+        self.model.processedMode = not self.model.processedMode
+        self.view.winChooser.SetProcessed(self.model.processedMode)
         
+    def _OnShowCalibration(self):
+        self.model.calibrationMode = not self.model.calibrationMode
+        self.view.winChooser.SetCalibration(self.model.calibrationMode)
+                 
     def ShowWindowChooser(self):
         self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
                                     self.model.WindowSettings.rect,

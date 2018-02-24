@@ -15,15 +15,15 @@ class Model(object):
         self.ImageArray = None  # high res
         self.PixelArray = []  # low res
         self.lastTime = time.time()
-        self.slowMode = False  # bmps of entire segments
-        self.fastMode = True  # very small point arrays
+        self.calibrationMode = True # bmps of entire segments
+        self.processedMode = True  # very small point arrays
         self.fullImageMarker = FullImageMarker(self.WindowSettings)
         self.fastImageMarker = FastImageMarker(self.WindowSettings)
         
     def update(self):
-        if self.slowMode:
+        if self.calibrationMode:
             self.fullImageMarker.update()
-        if self.fastMode:
+        if self.processedMode:
             self.fastImageMarker.update()
     
     def GetImageArray(self):
