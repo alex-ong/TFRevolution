@@ -29,8 +29,8 @@ class WindowSettings(object):
                 lines = f.readlines()
                 self.windowNameTarget = lines[0].strip()
                 self.rect = rectFromString(lines[1].strip())
-                self.gridSize = int(lines[2].strip())
-                self.playerDistance = int(lines[3].strip())                
+                self.gridSize = float(lines[2].strip())
+                self.playerDistance = float(lines[3].strip())                
         except (IndexError, FileNotFoundError): #file wrong format.
             print ("Error loading windowSettings")
             

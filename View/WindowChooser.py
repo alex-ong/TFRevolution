@@ -3,46 +3,60 @@ import tkinter as tk
 from View.RectChooser import RectChooser 
 from View.ImageCanvas import ImageCanvas
 from View.NumberChooser import NumberChooser
-from Util.math import tryGetInt
-
-
+from Util.math import tryGetFloat
+from View.RawDataCanvas import RawDataCanvas
+import time
 
 class WindowChooser(tk.Frame):
 
     def __init__(self, root):
         super().__init__(root)        
-        tk.Label(self,text="Window Target").grid(row=0,column=0)
+        tk.Label(self, text="Window Target").grid(row=0, column=0)
         self.windowTarget = tk.StringVar()
         self.windowNameTargetChooser = tk.OptionMenu(self, self.windowTarget, "choice1")
-        self.windowNameTargetChooser.grid(row=0,column=1)
-        tk.Button(self, text="Refresh window list", command=self._OnRefresh).grid(row=0,column=2)
+        self.windowNameTargetChooser.grid(row=0, column=1)
+        tk.Button(self, text="Refresh window list", command=self._OnRefresh).grid(row=0, column=2)
         
-        tk.Label(self,text="Capture rectangle").grid(row=1,column=0)
+        tk.Label(self, text="Capture rectangle").grid(row=1, column=0)
         self.rect = RectChooser(self, self._OnRectChange)
-        self.rect.grid(row=2,column=0,columnspan=3)
+        self.rect.grid(row=2, column=0, columnspan=3)
         
-        self.gridSize = NumberChooser(self, 'gridSizePixels', self._OnGridSizeChange)        
+        self.gridSize = NumberChooser(self, 'gridSizePixels', self._OnGridSizeChange, 0.1)        
         self.gridSize.grid(row=3, columnspan=1)
         
-        self.playerSep = NumberChooser(self, 'playerX separation', self._OnPlayerXChange)        
+        self.playerSep = NumberChooser(self, 'playerX separation', self._OnPlayerXChange, 0.1)        
         self.playerSep.grid(row=3, column=2, columnspan=1)
         
         tk.Button(self, text="Save", command=self._OnSave).grid(row=4)        
         self.imageCanvas = ImageCanvas(self)
-        self.imageCanvas.grid(row=5,columnspan=4,sticky=tk.NSEW)
+        self.imageCanvas.grid(row=5, columnspan=4, sticky=tk.NSEW)
+        
+        self.rawDataCanvas = RawDataCanvas(self)
+        self.rawDataCanvas.grid(row=6, columnspan=4, sticky=tk.NSEW)
+        
+        self.fpsLabel = tk.Label(self, text="FPS: ")
+        self.fpsLabel.grid(row=7)
         
         self._GridSizeChangeCb = None
         self._RectChangeCb = None
         self._WindowNameChangeCb = None
         self._RefreshCb = None
         self._UpdatePlayerSeparation = None
-    
+        self.timer = time.time()
+        
     def update(self):
+        self.updateFPSLabel()
         self.imageCanvas.update()
-            
+        self.rawDataCanvas.update()
+        
+    def updateFPSLabel(self):
+        diff = time.time() - self.timer
+        self.fpsLabel.config(text=("FPS " + str(round(1.0/diff)).zfill(3))) 
+        self.timer = time.time()
+                    
     # call callbacks if necessary    
     def _OnGridSizeChange(self):
-        success, value = tryGetInt(self.gridSize.value.get())
+        success, value = tryGetFloat(self.gridSize.value.get())
         if success and self._GridSizeChangeCb is not None:
             self._GridSizeChangeCb(value)
     
@@ -64,7 +78,7 @@ class WindowChooser(tk.Frame):
             self._RefreshCb()
     
     def _OnPlayerXChange(self):        
-        success, value = tryGetInt(self.playerSep.value.get())        
+        success, value = tryGetFloat(self.playerSep.value.get())        
         if success and self._UpdatePlayerSeparation is not None:
             self._UpdatePlayerSeparation(value)
             
@@ -87,13 +101,16 @@ class WindowChooser(tk.Frame):
     def SetGetImageSource(self, cb):
         self.imageCanvas.SetImageSource(cb)
     
+    def SetRawImageSource(self, cb):
+        self.rawDataCanvas.SetImageSource(cb)
+    
     def SetPlayerXOffsetCallback(self, cb):
         self._UpdatePlayerSeparation = cb
         
     def show(self, names, rect, grid, playerX):
         self.windowNameTargetChooser['menu'].delete(0, 'end')         
         self.windowTarget.set(str(names[0][1]))
-        autoChooseWindow = None #calculate hwnd and send to model if it is present
+        autoChooseWindow = None  # calculate hwnd and send to model if it is present
         
         for name in names:            
             hwnd = name[0]

@@ -1,11 +1,7 @@
 import tkinter as tk
 from View.NumberChooser import NumberChooser
 
-def tryGetInt(x):
-    try:
-        return (True, int(x))
-    except:
-        return (False, 0)
+from Util.math import tryGetInt
 
         
 class RectChooser(tk.Frame):
@@ -14,15 +10,16 @@ class RectChooser(tk.Frame):
         super().__init__(root)        
         self.OnChange = OnChange
         
-        self.x = NumberChooser(self,'x',self.FireEvent)
-        self.y = NumberChooser(self,'y',self.FireEvent)
-        self.w = NumberChooser(self,'w',self.FireEvent)
-        self.h = NumberChooser(self,'h',self.FireEvent)
+        self.x = NumberChooser(self, 'x', self.FireEvent, 1)
+        self.y = NumberChooser(self, 'y', self.FireEvent, 1)
+        self.w = NumberChooser(self, 'w', self.FireEvent, 1)
+        self.h = NumberChooser(self, 'h', self.FireEvent, 1)
     
-        self.x.grid(row=0,column=0)
-        self.y.grid(row=0,column=1)
-        self.w.grid(row=0,column=2)
-        self.h.grid(row=0,column=3)
+        self.x.grid(row=0, column=0)
+        self.y.grid(row=0, column=1)
+        self.w.grid(row=0, column=2)
+        self.h.grid(row=0, column=3)
+
     def FireEvent(self):   
         # convert from string to integer
         x = tryGetInt(self.x.value.get())

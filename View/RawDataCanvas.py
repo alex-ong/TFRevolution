@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import ImageTk
 
 
-class ImageCanvas(tk.Canvas):
+class RawDataCanvas(tk.Canvas):
 
     def __init__(self, root):
         super().__init__(root, width=500, height=400)        
@@ -10,23 +10,30 @@ class ImageCanvas(tk.Canvas):
         self._img = None
         self._tmpImg = None
         
-        self.ph = None        
+        self._rects = [[None for i in range(10)] for j in range(20)]
+        self.ph = None   
+        blockSize = 10
+        for y in range(len(self._rects)):
+            for x in range(len(self._rects[y])):                
+                startX = x * blockSize
+                endX = (x + 1) * blockSize
+                startY = y * blockSize
+                endY = (y + 1) * blockSize
+                myrectangle = self.create_rectangle(startX, startY, endX, endY, fill='yellow')
+                self._rects[y][x] = myrectangle
+    
+    def updateRect(self, x, y, color):
+        self.itemconfig(self._rects[y][x], fill=color)      
 
-    def update(self):
-        if self._getImg is not None: 
+    def update(self):   
+        if self._getImg is not None:            
             self.updateImage(self._getImg())
             
     def updateImage(self, image):
-        
-        if image is not None:            
-            self.ph = ImageTk.PhotoImage(image)
-            
-            # create image if not existing...
-            if self._img is None:
-                self._img = self.create_image(0, 0, image=self.ph,anchor=tk.NW)
-                self.create_line(0, 0, 100, 100)
-            else:    
-                self._img = self.itemconfig(self._img, image=self.ph)                        
-        
+        image = image[0]
+        for y in range(len(self._rects)):
+            for x in range(len(self._rects[y])):                
+                self.updateRect(x, y, image.getData(x, y))                
+       
     def SetImageSource(self, callback):
         self._getImg = callback

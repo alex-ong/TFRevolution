@@ -1,6 +1,5 @@
 
 import time
-# from Util.WindowMgr import WindowMgr
 import sys
     
 
@@ -17,7 +16,8 @@ class Controller(object):
                                             self._OnSave,
                                             self._OnRefresh,
                                             self._OnPlayerSepChange,
-                                            self.model.GetImageArray)
+                                            self.model.GetImageArray,
+                                            self.model.GetProcessedArray)
         self.ShowWindowChooser()
         
 

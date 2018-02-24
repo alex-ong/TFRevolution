@@ -1,7 +1,7 @@
 #todo move this copy to Util.
 def tryGetInt(x):
     try:
-        return (True, int(x))
+        return (True, round(float(x)))
     except:
         return (False, 0)
 
