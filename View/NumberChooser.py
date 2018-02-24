@@ -27,7 +27,6 @@ class NumberChooser(tk.Frame):
     def changeValue(self, amount):
         success, value = tryGetInt(self.value.get())
         if success:
-            print (value)
             value += amount
             self.value.set(str(value))
         #self.OnChange()    

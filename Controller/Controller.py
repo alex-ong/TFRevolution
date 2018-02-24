@@ -16,13 +16,13 @@ class Controller(object):
                                             self._OnGridSizeChange,
                                             self._OnSave,
                                             self._OnRefresh,
+                                            self._OnPlayerSepChange,
                                             self.model.GetImageArray)
         self.ShowWindowChooser()
         
 
     # model.WindowSettings
-    def _OnWindowNameChosen(self, hwnd, name):
-        print('controller got windowName change')
+    def _OnWindowNameChosen(self, hwnd, name):        
         self.model.WindowSettings.windowNameTarget = name
         self.model.WindowSettings.hwndTarget = hwnd
 
@@ -36,12 +36,16 @@ class Controller(object):
         self.model.WindowSettings.saveSettings()
                 
     def _OnRefresh(self):
-        self.view.LoadWindowChooser()                
+        self.view.LoadWindowChooser()           
+        
+    def _OnPlayerSepChange(self, value):     
+        self.model.WindowSettings.playerDistance = value
         
     def ShowWindowChooser(self):
         self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
                                     self.model.WindowSettings.rect,
-                                    self.model.WindowSettings.gridSize)
+                                    self.model.WindowSettings.gridSize,
+                                    self.model.WindowSettings.playerDistance)
         
     def update(self):
         self.model.update()

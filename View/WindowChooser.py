@@ -3,13 +3,8 @@ import tkinter as tk
 from View.RectChooser import RectChooser 
 from View.ImageCanvas import ImageCanvas
 from View.NumberChooser import NumberChooser
+from Util.math import tryGetInt
 
-#todo move this copy to Util.
-def tryGetInt(x):
-    try:
-        return (True, int(x))
-    except:
-        return (False, 0)
 
 
 class WindowChooser(tk.Frame):
@@ -26,9 +21,11 @@ class WindowChooser(tk.Frame):
         self.rect = RectChooser(self, self._OnRectChange)
         self.rect.grid(row=2,column=0,columnspan=3)
         
-        self.gridSize = NumberChooser(self, 'gridSizePixels', self._OnGridSizeChange)
-        tk.Label(self,text="Grid distance").grid(row=3,column=0)        
-        self.gridSize.grid(row=3, columnspan=2)
+        self.gridSize = NumberChooser(self, 'gridSizePixels', self._OnGridSizeChange)        
+        self.gridSize.grid(row=3, columnspan=1)
+        
+        self.playerSep = NumberChooser(self, 'playerX separation', self._OnPlayerXChange)        
+        self.playerSep.grid(row=3, column=2, columnspan=1)
         
         tk.Button(self, text="Save", command=self._OnSave).grid(row=4)        
         self.imageCanvas = ImageCanvas(self)
@@ -38,7 +35,7 @@ class WindowChooser(tk.Frame):
         self._RectChangeCb = None
         self._WindowNameChangeCb = None
         self._RefreshCb = None
-        
+        self._UpdatePlayerSeparation = None
     
     def update(self):
         self.imageCanvas.update()
@@ -65,6 +62,11 @@ class WindowChooser(tk.Frame):
     def _OnRefresh(self):
         if self._RefreshCb is not None:
             self._RefreshCb()
+    
+    def _OnPlayerXChange(self):        
+        success, value = tryGetInt(self.playerSep.value.get())        
+        if success and self._UpdatePlayerSeparation is not None:
+            self._UpdatePlayerSeparation(value)
             
     # Set callbacks
     def SetGridSizeChangeCallback(self, cb):
@@ -84,8 +86,11 @@ class WindowChooser(tk.Frame):
                         
     def SetGetImageSource(self, cb):
         self.imageCanvas.SetImageSource(cb)
+    
+    def SetPlayerXOffsetCallback(self, cb):
+        self._UpdatePlayerSeparation = cb
         
-    def show(self, names, rect, grid):
+    def show(self, names, rect, grid, playerX):
         self.windowNameTargetChooser['menu'].delete(0, 'end')         
         self.windowTarget.set(str(names[0][1]))
         autoChooseWindow = None #calculate hwnd and send to model if it is present
@@ -101,5 +106,6 @@ class WindowChooser(tk.Frame):
                 
         self.rect.show(rect)
         self.gridSize.value.set(str(grid))
+        self.playerSep.value.set(str(playerX))
         if (autoChooseWindow is not None):
             autoChooseWindow()
