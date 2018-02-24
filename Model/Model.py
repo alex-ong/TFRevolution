@@ -14,8 +14,8 @@ class Model(object):
 
     def __init__(self):    
         self.WindowSettings = WindowSettings(True)
-        self.ImageArray = None #high res
-        self.PixelArray = [] #low res
+        self.ImageArray = None  # high res
+        self.PixelArray = []  # low res
         self.lastTime = time.time()
         self.slowMode = True  # bmps of entire segments
         self.fastMode = False  # very small point arrays
@@ -31,7 +31,7 @@ class Model(object):
     
     def updateSlowArray(self):
         # todo: use windowSettings class..
-        x,y,w,h = self.WindowSettings.rect
+        x, y, w, h = self.WindowSettings.rect
         if w <= 0 or h <= 0:
             return
         hwnd = self.WindowSettings.hwndTarget
@@ -53,33 +53,59 @@ class Model(object):
                 myBitMap.Paint(newDC)
                 bmpinfo = myBitMap.GetInfo()
                 bmpstr = myBitMap.GetBitmapBits(True)
-                im = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)
+                im = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)                    
                 # im.save("C:/temp/temp.png")
                 # Free Resources
                 myDC.DeleteDC()
                 newDC.DeleteDC()
                 win32gui.ReleaseDC(hwnd, hDC)
                 win32gui.DeleteObject(myBitMap.GetHandle())
+                self.markSlowImage(im)
                 self.ImageArray = im      
-                print ("yay")  
+                 
             except pywintypes.error:
                 print ("error")
             except win32ui.error:
                 print ("error")
     
+    def markSlowImage(self, image):
+        pixels = image.load()
+
+        startOffset = [20, 20] #magic number :(
+        #mark player 1
+        self.markSlowPlayer(pixels,image.size, startOffset)
+        
+        startOffset[0] += self.WindowSettings.playerDistance
+        #mark player 2
+        self.markSlowPlayer(pixels,image.size, startOffset)
+        
+    def markSlowPlayer(self, pixels, imgsize, startOffset):
+        markColor = (255, 255, 255)
+        gs = self.WindowSettings.gridSize
+        w, h = imgsize
+        for y in range(20):
+            if y * gs  + startOffset[1] >= h:
+                break
+            for x in range(10):
+                if (x * gs + startOffset[0] >= w):
+                    break
+                
+                pixels[x * gs + startOffset[0],
+                       y * gs + startOffset[1]] = markColor               
+        
     def updatePixelArray(self):
         try:
             w = win32ui.FindWindow(None, "Untitled - Notepad")
         except win32ui.error:
-            return  # no window found                
-        print ("found window...")
+            return  # no window found
+        x, y, w, h = self.WindowSettings.rect                
         count = 0
         dc = w.GetWindowDC()
         while count < 1000:                
             dc.GetPixel (60, 20)         
-            count+= 1
+            count += 1
         dc.DeleteDC()        
-        print ("woot!")
+        
 
     
 if __name__ == '__main__':

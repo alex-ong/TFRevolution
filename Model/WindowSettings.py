@@ -13,9 +13,9 @@ class WindowSettings(object):
         self.winmgr = WindowMgr()
         self.windowNameTarget = "None"
         self.hwndTarget = 0
-        
         self.rect = [0,0,0,0]
         self.gridSize = 0
+        self.playerDistance = 140
         if loadSettings:
             self.loadSettings()
     
@@ -29,7 +29,8 @@ class WindowSettings(object):
                 lines = f.readlines()
                 self.windowNameTarget = lines[0].strip()
                 self.rect = rectFromString(lines[1].strip())
-                self.gridSize = int(lines[2].strip())                
+                self.gridSize = int(lines[2].strip())
+                self.playerDistance = int(lines[3].strip())                
         except (IndexError, FileNotFoundError): #file wrong format.
             print ("Error loading windowSettings")
             
@@ -38,6 +39,7 @@ class WindowSettings(object):
         lines.append(str(self.windowNameTarget) + '\n')
         lines.append(rectToString(self.rect) + '\n')
         lines.append(str(self.gridSize) + '\n')
+        lines.append(str(self.playerDistance) + '\n')
         with open("windowSettings.cfg", "w") as f:
             f.writelines(lines)
     

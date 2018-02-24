@@ -11,14 +11,22 @@ class View(tk.Frame):
         root.focus_force()             
         root.wm_title("TFRevolution")
         self.pack()
-        self.winChooser = WindowChooser(root) 
+        self.winChooser = WindowChooser(root)
+        self.winChooser.pack() 
   
     # called by Controller to set callbacks for when input changes
-    def SetWindowChooserCallbacks(self, name, rect, grid, save):
+    def SetWindowChooserCallbacks(self, name, rect, grid, save, refresh, image):
         self.winChooser.SetWindowNameChosenCallback(name)
         self.winChooser.SetRectChangeCallback(rect)
         self.winChooser.SetGridSizeChangeCallback(grid)
         self.winChooser.SetSaveCallback(save)
-                
+        self.winChooser.SetRefreshCallback(refresh)
+        self.winChooser.SetGetImageSource(image)
+
     def LoadWindowChooser(self, names, rect, grid):
         self.winChooser.show(names, rect, grid)
+    
+    def update(self):
+        self.winChooser.update()
+        super().update()
+        

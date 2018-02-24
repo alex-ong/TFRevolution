@@ -14,11 +14,11 @@ class Controller(object):
         self.view.SetWindowChooserCallbacks(self._OnWindowNameChosen,
                                             self._OnRectChange,
                                             self._OnGridSizeChange,
-                                            self._OnSave)
-        print(self.model.WindowSettings.rect)
-        self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
-                                    self.model.WindowSettings.rect,
-                                    self.model.WindowSettings.gridSize)
+                                            self._OnSave,
+                                            self._OnRefresh,
+                                            self.model.GetImageArray)
+        self.ShowWindowChooser()
+        
 
     # model.WindowSettings
     def _OnWindowNameChosen(self, hwnd, name):
@@ -35,5 +35,13 @@ class Controller(object):
     def _OnSave(self):
         self.model.WindowSettings.saveSettings()
                 
+    def _OnRefresh(self):
+        self.view.LoadWindowChooser()                
+        
+    def ShowWindowChooser(self):
+        self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
+                                    self.model.WindowSettings.rect,
+                                    self.model.WindowSettings.gridSize)
+        
     def update(self):
         self.model.update()
