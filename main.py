@@ -16,9 +16,13 @@ async def run_tk(view, controller, interval=0.001):
             controller.update() #update controller
             await asyncio.sleep(interval)
     except TclError as e:
+        print ("stopping")
+        controller.stop()
+        print ("joining")
+        controller.join()
         if "application has been destroyed" not in e.args[0]:
             raise
-
+    
 
 async def main():
     m = Model()

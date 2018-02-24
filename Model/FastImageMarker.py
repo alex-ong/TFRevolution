@@ -27,11 +27,22 @@ class PlayerData(object):
                       for j in range(10)] 
         self.incomingGarbage = 0
         self.playerNum = playerNum
-
+        self.changed = False
+    
+    def updateField(self,x,y, value):
+        if self.field[x][y] != value:
+            self.changed = True
+            self.field[x][y] = value
+            
     def getData(self, x, y):
         return self.field[x][y]
-                                
-
+      
+    def toDict(self):        
+        self.changed = False
+        result = {}
+        result["field"] = self.field #no need to deepcopy
+        result["incomingGarbage"] = self.incomingGarbage
+        return result        
     
 class FastImageMarker(object):
     def __init__(self, settings):
@@ -98,7 +109,18 @@ class FastImageMarker(object):
                 xPix = round(x * gs + startOffset[0])
                 if xPix >= w:
                     break
-                player.field[x][y] = ToHex(pixels[xPix,yPix])
+                player.updateField(x,y, ToHex(pixels[xPix,yPix]))
                 
+    def changed(self):        
+        for player in self.data:
+            if player.changed:
+                return True
+        return False 
+    
+    def toDict(self):
+        data = {}
+        for i in range (len(self.data)):
+            data["player" + str(i)] = self.data[i].toDict()                
+        return data
 
                 

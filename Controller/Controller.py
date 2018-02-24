@@ -1,9 +1,8 @@
 
+import Networking.TCPClient as tcp 
+import json
 import time
-import sys
-    
-
-
+messagesSent = 0
 class Controller(object):
 
     def __init__(self, model, view):
@@ -22,8 +21,8 @@ class Controller(object):
                                             self._OnShowProcessed,
                                             )
         self.ShowWindowChooser()
-        
-
+        self.FieldOutput = tcp.CreateClient("127.0.0.1", 9999)
+        self.lastFieldOutput = time.time()
     # model.WindowSettings
     def _OnWindowNameChosen(self, hwnd, name):        
         self.model.WindowSettings.windowNameTarget = name
@@ -60,3 +59,15 @@ class Controller(object):
         
     def update(self):
         self.model.update()
+        
+        #output data to our fieldOutput
+        if (self.model.fastImageMarker.changed):
+            self.lastFieldOutput = time.time()            
+            data = self.model.fastImageMarker.toDict()            
+            jsonStr = json.dumps(data,indent=2)           
+            self.FieldOutput.sendMessage(jsonStr)
+            global messagesSent
+            messagesSent +=1
+            print("Messages sent:" + str(messagesSent))
+            
+        
