@@ -23,8 +23,7 @@ class Model(object):
     def update(self):
         if self.calibrationMode:
             self.fullImageMarker.update()
-        if self.processedMode:
-            self.fastImageMarker.update()
+        self.fastImageMarker.update()
     
     def GetImageArray(self):
         return self.fullImageMarker.data                 
