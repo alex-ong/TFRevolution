@@ -33,8 +33,6 @@ class FullImageMarker(object):
             myBitMap.CreateCompatibleBitmap(myDC, w, h)
         
             newDC.SelectObject(myBitMap)
-        
-            win32gui.SetForegroundWindow(hwnd)
             
             newDC.BitBlt((x, y), (w, h) , myDC, (0, 0), win32con.SRCCOPY)
             myBitMap.Paint(newDC)

@@ -53,7 +53,6 @@ class FastImageMarker(object):
         self.updateSlowArray()
         
     def updateSlowArray(self):
-        # todo: use windowSettings class..
         x, y, w, h = self.WindowSettings.rect
         if w <= 0 or h <= 0:
             return
@@ -70,7 +69,7 @@ class FastImageMarker(object):
         
             newDC.SelectObject(myBitMap)
         
-            win32gui.SetForegroundWindow(hwnd)
+            #win32gui.SetForegroundWindow(hwnd)
             
             newDC.BitBlt((x, y), (w, h) , myDC, (0, 0), win32con.SRCCOPY)
             myBitMap.Paint(newDC)

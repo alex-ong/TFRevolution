@@ -38,13 +38,8 @@ class WindowChooser(tk.Frame):
                                            command=self._OnShowProcessed)
         self.processedButton.grid(row=4,column=2)
         
-        self.calibrationCanvas = ImageCanvas(self)
-        self.calibrationCanvas.grid(row=5, columnspan=4, sticky=tk.NSEW)
-        
-        self.processedCanvas = RawDataCanvas(self)
-        self.processedCanvas.grid(row=6, columnspan=4, sticky=tk.NSEW)
-        
-
+        self.calibrationCanvas = ImageCanvas(self) #don't grid        
+        self.processedCanvas = RawDataCanvas(self) #don't grid
         
         
         self._GridSizeChangeCb = None
@@ -161,15 +156,15 @@ class WindowChooser(tk.Frame):
             autoChooseWindow()
 
     def SetCalibration(self, value):
-        if value:
-            self.calibrationCanvas.grid()
+        if value:            
+            self.calibrationCanvas.grid(row=5, columnspan=4, sticky=tk.NSEW)        
         else:
             self.calibrationCanvas.grid_forget()
         self.showCalibration = value
     
     def SetProcessed(self, value):
         if value:
-            self.processedCanvas.grid()
+            self.processedCanvas.grid(row=6, columnspan=4, sticky=tk.NSEW)
         else:
             self.processedCanvas.grid_forget()
         self.showProcessed = value

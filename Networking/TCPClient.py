@@ -43,7 +43,7 @@ class ThreadedClient(StoppableThread.StoppableThread):
                 try:
                     # Connect to server and send data                    
                     sock.connect((self.target, self.port))
-                    while not self.stopped():
+                    while not self.stopped():                        
                         try:
                             item = self.messageQueue.get_nowait()
                         except queue.Empty:
@@ -56,12 +56,16 @@ class ThreadedClient(StoppableThread.StoppableThread):
                         sock.sendall(header)
                         sock.sendall(payload)
                 except ConnectionAbortedError:
-                    continue     
+                    print ("ConnectAbort")
+                    continue      
                 except ConnectionRefusedError:
+                    print ("ConnectRefused")
                     continue # server isn't alive yet
                 except ConnectionResetError:
+                    print ("ConnectReset")
                     continue # server restarted
-                except socket.timeout:                    
+                except socket.timeout:
+                    print ("ConnectTimeOut")                    
                     continue # timed out on a response. restart.
                 
 if __name__ == '__main__':

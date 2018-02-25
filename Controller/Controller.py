@@ -63,11 +63,12 @@ class Controller(object):
     
     def update(self):
         self.model.update()
+        
         minFrameTime = 0.016 #10 fps
         #output data to our fieldOutput
         if (time.time() - self.lastFieldOutput > minFrameTime):
             if (self.model.fastImageMarker.changed):        
-                self.lastFieldOutput = time.time()            
+                self.lastFieldOutput = time.time()                 
                 data = self.model.fastImageMarker.toDict()            
                 jsonStr = json.dumps(data,indent=2)           
                 self.FieldOutput.sendMessage(jsonStr)

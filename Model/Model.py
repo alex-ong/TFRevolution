@@ -15,8 +15,8 @@ class Model(object):
         self.ImageArray = None  # high res
         self.PixelArray = []  # low res
         self.lastTime = time.time()
-        self.calibrationMode = True # bmps of entire segments
-        self.processedMode = True  # very small point arrays
+        self.calibrationMode = False # bmps of entire segments
+        self.processedMode = False  # very small point arrays
         self.fullImageMarker = FullImageMarker(self.WindowSettings)
         self.fastImageMarker = FastImageMarker(self.WindowSettings)
         
