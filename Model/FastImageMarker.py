@@ -21,6 +21,7 @@ def ToHex(numbers):
     
 class PlayerData(object):
 
+    GARBAGE_RED = 100
     def __init__(self, playerNum):
         # access field by x, y
         self.field = [["#FF00FF" for i in range(20)]
@@ -33,6 +34,16 @@ class PlayerData(object):
         if self.field[x][y] != value:
             self.changed = True
             self.field[x][y] = value
+    
+    def resetGarbage(self):
+        self.incomingGarbage = 0
+        
+    def updateGarbage(self, y, color):
+        if color[0] >= PlayerData.GARBAGE_RED:
+            if (self.incomingGarbage != y - 1):
+                self.incomingGarbage = 0
+            else:
+                self.incomingGarbage = y
             
     def getData(self, x, y):
         return self.field[x][y]
@@ -45,6 +56,8 @@ class PlayerData(object):
         return result        
     
 class FastImageMarker(object):
+    MATRIX_Y = 20
+    MATRIX_X = 10
     def __init__(self, settings):
         self.data = [PlayerData(i) for i in range(2)]        
         self.WindowSettings = settings
@@ -90,26 +103,35 @@ class FastImageMarker(object):
 
     def markImage(self, image):
         pixels = image.load()
-    
+        garbageOffset = self.WindowSettings.garbageXOffset
         startOffset = [20, 20]  # magic number :(
         # mark player 1
         for player in self.data:
-            self.markPlayer(player, pixels, image.size, startOffset)            
+            self.markPlayer(player, pixels, image.size, garbageOffset, startOffset)            
             startOffset[0] += self.WindowSettings.playerDistance
         
-    def markPlayer(self, player, pixels, imgsize, startOffset):
+    def markPlayer(self, player, pixels, imgsize, garbageOffset, startOffset):
+        player.resetGarbage()
         gs = self.WindowSettings.gridSize
         w, h = imgsize
-        for y in range(20):
+        for y in range(FastImageMarker.MATRIX_Y):
             yPix = round(y * gs + startOffset[1]) 
             if yPix >= h:
                 break
-            for x in range(10):
+            for x in range(FastImageMarker.MATRIX_X):
                 xPix = round(x * gs + startOffset[0])
                 if xPix >= w:
                     break
                 player.updateField(x,y, ToHex(pixels[xPix,yPix]))
-                
+        
+        #garbage detection
+        for y in range(FastImageMarker.MATRIX_Y - 1, -1, -1):
+            yPix = round(y * gs + startOffset[1])
+            xPix = round(x * gs + startOffset[0] + garbageOffset)
+            if xPix >= w or yPix >= h:
+                continue
+            player.updateGarbage(20-y, pixels[xPix,yPix])
+             
     def changed(self):        
         for player in self.data:
             if player.changed:

@@ -7,6 +7,7 @@ from Util.math import tryGetFloat
 from View.RawDataCanvas import RawDataCanvas
 import time
 
+
 class WindowChooser(tk.Frame):
 
     def __init__(self, root):
@@ -24,25 +25,26 @@ class WindowChooser(tk.Frame):
         self.rect.grid(row=2, column=0, columnspan=3)
         
         self.gridSize = NumberChooser(self, 'gridSizePixels', self._OnGridSizeChange, 0.1)        
-        self.gridSize.grid(row=3, columnspan=1)
-        
+        self.gridSize.grid(row=3, column=0)        
+        self.garbageSep = NumberChooser(self, 'Garbage X Separation', self._OnGarbageXChange, 0.1)
+        self.garbageSep.grid(row=3, column=1)
         self.playerSep = NumberChooser(self, 'playerX separation', self._OnPlayerXChange, 0.1)        
-        self.playerSep.grid(row=3, column=2, columnspan=1)
+        self.playerSep.grid(row=3, column=2)
         
-        tk.Button(self, text="Save", command=self._OnSave).grid(row=4,column=0)
-        self.calibrationButton = tk.Button(self, text="Show/Hide Screenshot", 
+        tk.Button(self, text="Save", command=self._OnSave).grid(row=4, column=0)
+        self.calibrationButton = tk.Button(self, text="Show/Hide Screenshot",
                                            command=self._OnShowCalibration)
-        self.calibrationButton.grid(row=4,column=1)
+        self.calibrationButton.grid(row=4, column=1)
         
-        self.processedButton = tk.Button(self, text="Show/Hide Processed", 
+        self.processedButton = tk.Button(self, text="Show/Hide Processed",
                                            command=self._OnShowProcessed)
-        self.processedButton.grid(row=4,column=2)
+        self.processedButton.grid(row=4, column=2)
         
-        self.calibrationCanvas = ImageCanvas(self) #don't grid        
-        self.processedCanvas = RawDataCanvas(self) #don't grid
-        
+        self.calibrationCanvas = ImageCanvas(self)  # don't grid        
+        self.processedCanvas = RawDataCanvas(self)  # don't grid
         
         self._GridSizeChangeCb = None
+        self._GarbageXChangeCb = None
         self._RectChangeCb = None
         self._WindowNameChangeCb = None
         self._RefreshCb = None
@@ -63,7 +65,7 @@ class WindowChooser(tk.Frame):
         
     def updateFPSLabel(self):
         diff = time.time() - self.timer
-        self.fpsLabel.config(text=("FPS " + str(round(1.0/diff)).zfill(3))) 
+        self.fpsLabel.config(text=("FPS " + str(round(1.0 / diff)).zfill(3))) 
         self.timer = time.time()
                     
     # call callbacks if necessary    
@@ -72,6 +74,11 @@ class WindowChooser(tk.Frame):
         if success and self._GridSizeChangeCb is not None:
             self._GridSizeChangeCb(value)
     
+    def _OnGarbageXChange(self):
+        success, value = tryGetFloat(self.garbageSep.value.get())
+        if success and self._GarbageXChangeCb is not None:
+            self._GarbageXChangeCb(value)
+            
     def _OnRectChange(self, value):
         if self._RectChangeCb is not None:
             self._RectChangeCb(value)
@@ -124,6 +131,9 @@ class WindowChooser(tk.Frame):
     def SetRawImageSource(self, cb):
         self.processedCanvas.SetImageSource(cb)
     
+    def SetGarbageXOffsetCallback(self, cb):
+        self._GarbageXChangeCb = cb
+        
     def SetPlayerXOffsetCallback(self, cb):
         self._UpdatePlayerSeparation = cb
         
@@ -132,10 +142,8 @@ class WindowChooser(tk.Frame):
         
     def SetShowProcessedCallback(self, cb):
         self._OnToggleShowProcessed = cb
-    
-    
                          
-    def show(self, names, rect, grid, playerX):
+    def show(self, names, rect, grid, garbageX, playerX):
         self.windowNameTargetChooser['menu'].delete(0, 'end')         
         self.windowTarget.set(str(names[0][1]))
         autoChooseWindow = None  # calculate hwnd and send to model if it is present
@@ -151,6 +159,7 @@ class WindowChooser(tk.Frame):
                 
         self.rect.show(rect)
         self.gridSize.value.set(str(grid))
+        self.garbageSep.value.set(str(garbageX))
         self.playerSep.value.set(str(playerX))
         if (autoChooseWindow is not None):
             autoChooseWindow()
@@ -168,5 +177,4 @@ class WindowChooser(tk.Frame):
         else:
             self.processedCanvas.grid_forget()
         self.showProcessed = value
-        
         

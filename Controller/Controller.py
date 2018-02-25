@@ -1,8 +1,8 @@
-
 import Networking.TCPClient as tcp 
 import json
 import time
-messagesSent = 0
+
+
 class Controller(object):
 
     def __init__(self, model, view):
@@ -14,6 +14,7 @@ class Controller(object):
                                             self._OnGridSizeChange,
                                             self._OnSave,
                                             self._OnRefresh,
+                                            self._OnGarbageXChange,
                                             self._OnPlayerSepChange,
                                             self.model.GetImageArray,
                                             self.model.GetProcessedArray,
@@ -40,6 +41,9 @@ class Controller(object):
                 
     def _OnRefresh(self):
         self.view.LoadWindowChooser()           
+    
+    def _OnGarbageXChange(self, value):
+        self.model.WindowSettings.garbageXOffset = value
         
     def _OnPlayerSepChange(self, value):     
         self.model.WindowSettings.playerDistance = value
@@ -56,7 +60,9 @@ class Controller(object):
         self.view.LoadWindowChooser(self.model.WindowSettings.getWindowNames(),
                                     self.model.WindowSettings.rect,
                                     self.model.WindowSettings.gridSize,
+                                    self.model.WindowSettings.garbageXOffset,
                                     self.model.WindowSettings.playerDistance)
+
     def stop(self):
         self.FieldOutput.stop()
         self.FieldOutput.join()
@@ -64,16 +70,12 @@ class Controller(object):
     def update(self):
         self.model.update()
         
-        minFrameTime = 0.016 #10 fps
-        #output data to our fieldOutput
+        minFrameTime = 0.016  # 10 fps
+        # output data to our fieldOutput
         if (time.time() - self.lastFieldOutput > minFrameTime):
             if (self.model.fastImageMarker.changed):        
                 self.lastFieldOutput = time.time()                 
                 data = self.model.fastImageMarker.toDict()            
-                jsonStr = json.dumps(data,indent=2)           
+                jsonStr = json.dumps(data, indent=2)           
                 self.FieldOutput.sendMessage(jsonStr)
-                global messagesSent
-                messagesSent +=1
-                print("Messages sent:" + str(messagesSent))
-            
         

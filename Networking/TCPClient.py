@@ -50,8 +50,7 @@ class ThreadedClient(StoppableThread.StoppableThread):
                             time.sleep(0.001)
                             continue
                         payload = bytes(item, "utf-8")                        
-                        length = len(payload)
-                        print ("Sending message of length:" + str(length))                        
+                        length = len(payload)                        
                         header = struct.pack('<i',length)                        
                         sock.sendall(header)
                         sock.sendall(payload)
