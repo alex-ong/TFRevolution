@@ -70,12 +70,15 @@ class Controller(object):
     def update(self):
         self.model.update()
         
-        minFrameTime = 0.016  # 10 fps
-        # output data to our fieldOutput
-        if (time.time() - self.lastFieldOutput > minFrameTime):
-            if (self.model.fastImageMarker.changed):        
-                self.lastFieldOutput = time.time()                 
-                data = self.model.fastImageMarker.toDict()            
-                jsonStr = json.dumps(data, indent=2)           
-                self.FieldOutput.sendMessage(jsonStr)
-        
+        # We can use this to refresh update rate.
+        timer = time.time()        
+        '''Uncomment this to cap framerate
+        minFrameTime = 0.02 # 50 fps
+        if (timer - self.lastFieldOutput > minFrameTime):
+            this is roughly 3fps in tetris friends.
+        '''    
+        if (self.model.fastImageMarker.changed() > 0):                      
+            self.lastFieldOutput = timer 
+            data = self.model.fastImageMarker.toDict()            
+            jsonStr = json.dumps(data, indent=2)           
+            self.FieldOutput.sendMessage(jsonStr)            

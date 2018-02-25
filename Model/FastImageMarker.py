@@ -9,30 +9,33 @@ except ImportError:
     print('Please run "pip install pypiwin32"')
 
 from enum import Enum
+
+
 def hexNoLeader(number):
-    return hex(number).replace("0x","")
+    return hex(number).replace("0x", "")
+
 
 def ToHex(numbers):
-    return ('#' + hexNoLeader(numbers[0]).zfill(2) +
-                hexNoLeader(numbers[1]).zfill(2) +
+    return ('#' + hexNoLeader(numbers[0]).zfill(2) + 
+                hexNoLeader(numbers[1]).zfill(2) + 
                 hexNoLeader(numbers[2]).zfill(2))
-
 
     
 class PlayerData(object):
 
     GARBAGE_RED = 100
+
     def __init__(self, playerNum):
         # access field by x, y
         self.field = [["#FF00FF" for i in range(20)]
                       for j in range(10)] 
         self.incomingGarbage = 0
         self.playerNum = playerNum
-        self.changed = False
+        self.changed = 0
     
-    def updateField(self,x,y, value):
+    def updateField(self, x, y, value):
         if self.field[x][y] != value:
-            self.changed = True
+            self.changed += 1
             self.field[x][y] = value
     
     def resetGarbage(self):
@@ -49,15 +52,17 @@ class PlayerData(object):
         return self.field[x][y]
       
     def toDict(self):        
-        self.changed = False
+        self.changed = 0
         result = {}
-        result["field"] = self.field #no need to deepcopy
+        result["field"] = self.field  # no need to deepcopy
         result["incomingGarbage"] = self.incomingGarbage
         return result        
+
     
 class FastImageMarker(object):
     MATRIX_Y = 20
     MATRIX_X = 10
+
     def __init__(self, settings):
         self.data = [PlayerData(i) for i in range(2)]        
         self.WindowSettings = settings
@@ -82,7 +87,7 @@ class FastImageMarker(object):
         
             newDC.SelectObject(myBitMap)
         
-            #win32gui.SetForegroundWindow(hwnd)
+            # win32gui.SetForegroundWindow(hwnd)
             
             newDC.BitBlt((x, y), (w, h) , myDC, (0, 0), win32con.SRCCOPY)
             myBitMap.Paint(newDC)
@@ -122,15 +127,15 @@ class FastImageMarker(object):
                 xPix = round(x * gs + startOffset[0])
                 if xPix >= w:
                     break
-                player.updateField(x,y, ToHex(pixels[xPix,yPix]))
+                player.updateField(x, y, ToHex(pixels[xPix, yPix]))
         
-        #garbage detection
+        # garbage detection
         for y in range(FastImageMarker.MATRIX_Y - 1, -1, -1):
             yPix = round(y * gs + startOffset[1])
             xPix = round(x * gs + startOffset[0] + garbageOffset)
             if xPix >= w or yPix >= h:
                 continue
-            player.updateGarbage(20-y, pixels[xPix,yPix])
+            player.updateGarbage(20 - y, pixels[xPix, yPix])
              
     def changed(self):        
         for player in self.data:
