@@ -6,6 +6,6 @@ name = "pypi"
 [packages]
 pillow = "*"
 "pypiwin32" = "*"
+mss = "*"
 
 [dev-packages]
-

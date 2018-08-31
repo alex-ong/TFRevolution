@@ -80,7 +80,7 @@ class FastImageMarker(object):
             hDC = win32gui.GetDC(hwnd)
             myDC = win32ui.CreateDCFromHandle(hDC)
             newDC = myDC.CreateCompatibleDC()
-        
+            
             myBitMap = win32ui.CreateBitmap()
             myBitMap.CreateCompatibleBitmap(myDC, w, h)
         
@@ -88,7 +88,7 @@ class FastImageMarker(object):
         
             # win32gui.SetForegroundWindow(hwnd)
             
-            newDC.BitBlt((x, y), (w, h) , myDC, (0, 0), win32con.SRCCOPY)
+            newDC.BitBlt((0, 0), (w, h) , myDC, (x, y), win32con.SRCCOPY)
             myBitMap.Paint(newDC)
             bmpinfo = myBitMap.GetInfo()
             bmpstr = myBitMap.GetBitmapBits(True)
@@ -118,6 +118,9 @@ class FastImageMarker(object):
         player.resetGarbage()
         gs = self.WindowSettings.gridSize
         w, h = imgsize
+        y = 0
+        x = 0
+
         for y in range(FastImageMarker.MATRIX_Y):
             yPix = round(y * gs + startOffset[1]) 
             if yPix >= h:
