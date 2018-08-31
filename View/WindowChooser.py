@@ -52,20 +52,30 @@ class WindowChooser(tk.Frame):
         self._OnShowProcessed = None
         self._OnShowCalibration = None
         
-        self.showCalibration = True
-        self.showProcessed = True        
+        self.showCalibration = False
+        self.showProcessed = False
         self.timer = time.time()
+        self.isBeingDestroyed = False
+
+    def safeDestroy(self):
+        self.isBeingDestroyed = True
 
     def update(self):
-        self.updateFPSLabel()
-        if self.showCalibration:
-            self.calibrationCanvas.update()            
-        if self.showProcessed:
-            self.processedCanvas.update()
+        if not self.isBeingDestroyed:
+            self.updateFPSLabel()
+            if self.showCalibration:
+                self.calibrationCanvas.update()
+            if self.showProcessed:
+                self.processedCanvas.update()
         
     def updateFPSLabel(self):
         diff = time.time() - self.timer
-        self.fpsLabel.config(text=("FPS " + str(round(1.0 / diff)).zfill(3))) 
+        if (diff != 0):
+            text = ("FPS " + str(round(1.0 / diff)).zfill(3))
+            try:
+                self.fpsLabel.config(text=text) 
+            except tk.TclError as e:
+                pass
         self.timer = time.time()
                     
     # call callbacks if necessary    

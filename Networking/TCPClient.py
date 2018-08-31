@@ -55,16 +55,16 @@ class ThreadedClient(StoppableThread.StoppableThread):
                         sock.sendall(header)
                         sock.sendall(payload)
                 except ConnectionAbortedError:
-                    print ("ConnectAbort")
+                    #print ("ConnectAbort")
                     continue      
                 except ConnectionRefusedError:
-                    print ("ConnectRefused")
+                    #print ("ConnectRefused")
                     continue # server isn't alive yet
                 except ConnectionResetError:
-                    print ("ConnectReset")
+                    #print ("ConnectReset")
                     continue # server restarted
                 except socket.timeout:
-                    print ("ConnectTimeOut")                    
+                    #print ("ConnectTimeOut")
                     continue # timed out on a response. restart.
                 
 if __name__ == '__main__':

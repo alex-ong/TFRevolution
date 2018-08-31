@@ -15,7 +15,7 @@ async def run_tk(view, controller, interval=0.001):
             view.update() #update gui
             controller.update() #update controller
             await asyncio.sleep(interval)
-    except TclError as e:
+    except TclError as e:        
         controller.stop()
         if "application has been destroyed" not in e.args[0]:
             raise

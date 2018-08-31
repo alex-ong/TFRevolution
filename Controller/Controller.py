@@ -64,6 +64,7 @@ class Controller(object):
                                     self.model.WindowSettings.playerDistance)
 
     def stop(self):
+        print ("closing worker threads...")
         self.FieldOutput.stop()
         self.FieldOutput.join()
     
@@ -77,8 +78,8 @@ class Controller(object):
         if (timer - self.lastFieldOutput > minFrameTime):
             this is roughly 3fps in tetris friends.
         '''    
-        if (self.model.fastImageMarker.changed() > 0):                      
+        if (self.model.fastImageMarker.changed() > 0):
             self.lastFieldOutput = timer 
-            data = self.model.fastImageMarker.toDict()            
-            jsonStr = json.dumps(data, indent=2)           
-            self.FieldOutput.sendMessage(jsonStr)            
+            data = self.model.fastImageMarker.toDict()
+            jsonStr = json.dumps(data, indent=2)
+            self.FieldOutput.sendMessage(jsonStr)

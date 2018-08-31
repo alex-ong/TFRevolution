@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{e752120e-2917-48bc-a796-f34051ca7e34}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>main.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Controller\Controller.py" />
+    <Compile Include="Controller\__init__.py" />
+    <Compile Include="main.py" />
+    <Compile Include="Model\FastImageMarker.py" />
+    <Compile Include="Model\FullImageMarker.py" />
+    <Compile Include="Model\Model.py" />
+    <Compile Include="Model\WindowSettings.py" />
+    <Compile Include="Model\__init__.py" />
+    <Compile Include="Networking\StoppableThread.py" />
+    <Compile Include="Networking\TCPClient.py" />
+    <Compile Include="Networking\TCPServer.py" />
+    <Compile Include="Networking\__init__.py" />
+    <Compile Include="test.py" />
+    <Compile Include="Util\math.py" />
+    <Compile Include="Util\WindowMgr.py" />
+    <Compile Include="Util\__init__.py" />
+    <Compile Include="View\ImageCanvas.py" />
+    <Compile Include="View\NumberChooser.py" />
+    <Compile Include="View\RawDataCanvas.py" />
+    <Compile Include="View\RectChooser.py" />
+    <Compile Include="View\View.py" />
+    <Compile Include="View\WindowChooser.py" />
+    <Compile Include="View\__init__.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controller" />
+    <Folder Include="Model" />
+    <Folder Include="Networking" />
+    <Folder Include="Util" />
+    <Folder Include="View" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
