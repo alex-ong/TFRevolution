@@ -1,0 +1,1 @@
+#method for marking image via resizing to 1 pixel grid and then reading.

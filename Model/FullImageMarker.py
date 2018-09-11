@@ -6,17 +6,14 @@ class FullImageMarker(object):
         self.WindowSettings = settings
 
     def update(self):
-        self.updateSlowArray()
-    
-    def imageCapture(self):
-        return FullImageCapture(self.WindowSettings.rect, self.WindowSettings.hwndTarget)
-
-    def updateSlowArray(self):
         image = self.imageCapture()
 
         if image is not None:
             self.markImage(image)
             self.data = image
+    
+    def imageCapture(self):
+        return FullImageCapture(self.WindowSettings.rect, self.WindowSettings.hwndTarget)   
 
     def markImage(self, image):
         pixels = image.load()

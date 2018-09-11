@@ -1,0 +1,1 @@
+#method for marking an image based purely on pixel offsets.
