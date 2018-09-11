@@ -1,4 +1,4 @@
-from Model.ImageCaptureMethod import ImageCapture
+from Model.ImageCaptureMethod import FullImageCapture
 
 class FullImageMarker(object):
     def __init__(self, settings):
@@ -9,7 +9,7 @@ class FullImageMarker(object):
         self.updateSlowArray()
     
     def imageCapture(self):
-        return ImageCapture(self.WindowSettings.rect, self.WindowSettings.hwndTarget)
+        return FullImageCapture(self.WindowSettings.rect, self.WindowSettings.hwndTarget)
 
     def updateSlowArray(self):
         image = self.imageCapture()
