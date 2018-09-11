@@ -40,7 +40,7 @@ class Controller(object):
         self.model.WindowSettings.saveSettings()
                 
     def _OnRefresh(self):
-        self.ShowWindowChooser();
+        self.ShowWindowChooser()
     
     def _OnGarbageXChange(self, value):
         self.model.WindowSettings.garbageXOffset = value
