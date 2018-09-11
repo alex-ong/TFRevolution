@@ -1,16 +1,6 @@
-from enum import Enum
-CaptureMode = Enum('CaptureMode', 'Win32UI mss')
-CAPTURE_MODE = CaptureMode.mss
-#CAPTURE_MODE = CaptureMode.mss
-if CAPTURE_MODE == CaptureMode.Win32UI:
-    from Model.ImageCaptureWin32UI import ImageCapture
-else:
-    from Model.ImageCaptureMSS import ImageCapture
-
-from PIL import Image
+from Model.ImageCaptureMethod import ImageCapture
 
 class FullImageMarker(object):
-
     def __init__(self, settings):
         self.data = None
         self.WindowSettings = settings

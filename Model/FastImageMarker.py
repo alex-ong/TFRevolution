@@ -3,9 +3,13 @@ try:
     import win32gui
     import win32con
     import pywintypes
-    from PIL import Image    
 except ImportError:
     print('Please run "pip install pypiwin32"')
+
+try:
+    from PIL import Image    
+except ImportError:
+    print('Please run "pip install pillow"')
 
 from enum import Enum
 
