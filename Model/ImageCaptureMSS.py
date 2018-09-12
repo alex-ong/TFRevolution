@@ -5,6 +5,7 @@ except ImportError:
 
 try:
     import win32ui
+    import win32gui
     import pywintypes
 except ImportError:
     print ('Please "pip install pypiwin32"')

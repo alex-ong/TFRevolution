@@ -1,6 +1,8 @@
 class PlayerData(object):
 
     GARBAGE_RED = 100
+    MATRIX_Y = 20
+    MATRIX_X = 10
 
     def __init__(self, playerNum):
         # access field by x, y
