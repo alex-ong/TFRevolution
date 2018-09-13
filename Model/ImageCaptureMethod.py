@@ -57,7 +57,10 @@ class ThreadedWinCapture(StoppableThread.StoppableThread):
                     self.currentImage = image
                     self.imageId += 1
                     self.imageLock.release()
-                    print (1.0 / (time.time() - timer))
+                    try:
+                        print (1.0 / (time.time() - timer))
+                    except:
+                        pass
                     timer = time.time()
 
 #todo: static single instance winCapture.

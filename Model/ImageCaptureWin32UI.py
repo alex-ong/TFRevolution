@@ -11,85 +11,71 @@ try:
 except ImportError:
     print('Please run "pip install pillow"')
 
-#todo: wrap in a class
 
-lastRectangle = None
-lasthwndTarget = None
-hDC = None
-myDC = None
-newDC = None
-myBitMap = None
-
-def InitAll():
-    global hDC
-    global myDC 
-    global newDC 
-    global myBitMap
-    global lastRectangle
-    global lasthwndTarget
+class Win32UICapture(object):
+    def __init__(self):
+        self.lastRectangle = None
+        self.lasthwndTarget = None
+        self.hDC = None
+        self.myDC = None
+        self.newDC = None
+        self.myBitMap = None
     
-    hwnd = lasthwndTarget
-    x, y, w, h = lastRectangle
-    hDC = win32gui.GetDC(hwnd)
-    myDC = win32ui.CreateDCFromHandle(hDC)
-    newDC = myDC.CreateCompatibleDC()
+    def InitAll(self):
+        hwnd = self.lasthwndTarget
+        x, y, w, h = self.lastRectangle
+        self.hDC = win32gui.GetDC(hwnd)
+        self.myDC = win32ui.CreateDCFromHandle(self.hDC)
+        self.newDC = self.myDC.CreateCompatibleDC()
             
-    myBitMap = win32ui.CreateBitmap()
-    myBitMap.CreateCompatibleBitmap(myDC, w, h)
+        self.myBitMap = win32ui.CreateBitmap()
+        self.myBitMap.CreateCompatibleBitmap(self.myDC, w, h)
         
-    newDC.SelectObject(myBitMap)
+        self.newDC.SelectObject(self.myBitMap)
+ 
+    def ReleaseAll(self):    
+        hwnd = self.lasthwndTarget
+        if self.myDC is not None:
+            self.myDC.DeleteDC()
+            self.myDC = None
+        if self.newDC is not None:
+            self.newDC.DeleteDC()
+            self.newDC = None
+        if self.hDC is not None:
+            win32gui.ReleaseDC(hwnd, self.hDC)
+            self.hDC = None
+        if self.myBitMap is not None:
+            win32gui.DeleteObject(self.myBitMap.GetHandle())    
+            self.myBitMap = None
 
-def ReleaseAll():
-    global hDC
-    global myDC 
-    global newDC 
-    global myBitMap
-    global lasthwndTarget
-    
-    hwnd = lasthwndTarget
-    if myDC is not None:
-        myDC.DeleteDC()
-        myDC = None
-    if newDC is not None:
-        newDC.DeleteDC()
-        newDC = None
-    if hDC is not None:
-        win32gui.ReleaseDC(hwnd, hDC)
-        hDC = None
-    if myBitMap is not None:
-        win32gui.DeleteObject(myBitMap.GetHandle())    
-        myBitMap = None
+    def ImageCapture(self, rectangle, hwndTarget):    
+        x, y, w, h = rectangle
+        hwnd = hwndTarget
+        if w <= 0 or h <= 0 or hwnd == 0:
+            return None        
 
-def ImageCapture(rectangle, hwndTarget):
-    global lastRectangle
-    global lasthwndTarget
-    global myDC
-    global newDC
-    global myBitMap
-    x, y, w, h = rectangle
-    if w <= 0 or h <= 0:
-        return
-    hwnd = hwndTarget
-    if hwnd == 0: 
+        try:        
+            if self.lastRectangle != rectangle or self.lasthwndTarget != hwndTarget:
+                self.ReleaseAll()
+                self.lastRectangle = rectangle
+                self.lasthwndTarget = hwndTarget 
+                self.InitAll()
+            
+            self.newDC.BitBlt((0, 0), (w, h) , self.myDC, (x, y), win32con.SRCCOPY)
+            self.myBitMap.Paint(self.newDC)
+            bmpinfo = self.myBitMap.GetInfo()
+            bmpstr = self.myBitMap.GetBitmapBits(True)
+            im = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)
+            # im.save("C:/temp/temp.png")
+            # Free Resources            
+            return im
+        except pywintypes.error:
+            raise
+        except win32ui.error:
+            raise
         return None
-    try:        
-        if lastRectangle != rectangle or lasthwndTarget != hwndTarget:
-            ReleaseAll()
-            lastRectangle = rectangle
-            lasthwndTarget = hwndTarget 
-            InitAll()
 
-        newDC.BitBlt((0, 0), (w, h) , myDC, (x, y), win32con.SRCCOPY)
-        myBitMap.Paint(newDC)
-        bmpinfo = myBitMap.GetInfo()
-        bmpstr = myBitMap.GetBitmapBits(True)
-        im = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)
-        # im.save("C:/temp/temp.png")
-        # Free Resources            
-        return im
-    except pywintypes.error:
-        raise
-    except win32ui.error:
-        raise
-    return None
-
+imgCap = Win32UICapture()
+def ImageCapture(rectangle, hwndTarget):
+    global imgCap
+    return imgCap.ImageCapture(rectangle,hwndTarget)
