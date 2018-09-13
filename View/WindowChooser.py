@@ -55,6 +55,7 @@ class WindowChooser(tk.Frame):
         self.showCalibration = False
         self.showProcessed = False
         self.timer = time.time()
+        self.frameCount = 0
         self.isBeingDestroyed = False
 
     def safeDestroy(self):
@@ -69,14 +70,19 @@ class WindowChooser(tk.Frame):
                 self.processedCanvas.update()
         
     def updateFPSLabel(self):
-        diff = time.time() - self.timer
-        if (diff != 0):
-            text = ("FPS " + str(round(1.0 / diff)).zfill(3))
-            try:
-                self.fpsLabel.config(text=text) 
-            except tk.TclError as e:
-                pass
-        self.timer = time.time()
+        
+        self.frameCount += 1
+        if self.frameCount >= 10:            
+            diff = time.time() - self.timer
+            fps = round(self.frameCount / float(diff))
+            if (diff != 0):
+                text = ("FPS " + str(fps).zfill(3))
+                try:
+                    self.fpsLabel.config(text=text) 
+                except tk.TclError as e:
+                    pass
+            self.frameCount = 0
+            self.timer = time.time()
                     
     # call callbacks if necessary    
     def _OnGridSizeChange(self):
